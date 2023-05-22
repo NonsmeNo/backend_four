@@ -29,15 +29,15 @@ if (!empty($messages)) {
     <div class="fields">
         <div class="item">
             <label for="name">Имя</label><br>
-            <input type="text" name="name" class="<?php if ($errors['name']) {print 'name';} ?>" placeholder="Введите ваше имя"  value="<?php print $values['name']; ?>">
+            <input type="text" name="name" value="<?php print $values['name'];?>" placeholder="Введите ваше имя">
         </div>
         <div class="item">
                 <label for="email">E-mail</label><br>
-                <input type="text" name="email">     
+                <input type="text" name="email" class="<?php if ($errors['email']) {print 'email';} ?>"  value="<?php print $values['email'];?>" placeholder="Введите e-mail">     
         </div>
         <div class="item">
             Ваша биография<br>
-        <textarea name="biography" id="biography"></textarea>
+        <textarea name="biography" class="<?php if ($errors['biography']) {print 'biography';} ?>"  value="<?php print $values['biography'];?>" placeholder="Добавьте биографию"></textarea>
         </div>
     </div>
 
@@ -48,7 +48,7 @@ if (!empty($messages)) {
                 Ваш пол:<br> 
                 <div class="changeGen">
                     <label>
-                        <input type="radio" name="gender" value="F">
+                        <input type="radio" name="gender" value="F" <?php if ($values['gender']=='F') {print 'checked';} ?> >
                         Женский &#9792;
                     </label>
                     <br>

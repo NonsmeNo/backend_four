@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>backend_four</title>
+</head>
+<body>
+   
+<?php
+if (!empty($messages)) {
+  print('<div id="messages">');
+  // Выводим все сообщения.
+  foreach ($messages as $message) {
+    print($message);
+  }
+  print('</div>');
+}
+// Далее выводим форму отмечая элементы с ошибками классом error 
+// и задавая начальные значения элементов ранее сохраненными
+?>
+
+<form action="index.php" method="POST">
+
+    <h2>Регистрация</h2>
+    <hr>
+
+    <div class="fields">
+        <div class="item">
+            <label for="name">Имя</label><br>
+            <input type="text" name="name" class="<?php if ($errors['name']) {print 'name';} ?>" placeholder="Введите ваше имя"  value="<?php print $values['name']; ?>">
+        </div>
+        <div class="item">
+                <label for="email">E-mail</label><br>
+                <input type="text" name="email">     
+        </div>
+        <div class="item">
+            Ваша биография<br>
+        <textarea name="biography" id="biography"></textarea>
+        </div>
+    </div>
+
+    <div class="inlblock">
+        <div class="colblock">
+
+            <div class="gender">
+                Ваш пол:<br> 
+                <div class="changeGen">
+                    <label>
+                        <input type="radio" name="gender" value="F">
+                        Женский &#9792;
+                    </label>
+                    <br>
+                    <label>
+                        <input type="radio" name="gender" value="M">
+                        Мужской &#9794;
+                    </label>
+                </div>
+            </div>  
+
+            <div class="birth">
+                <label>
+                    Дата Рождения:<br>
+                    <input name="birth" type="date" value="2023-03-23">
+                </label> 
+            </div>
+           
+
+            
+        </div>
+    
+        <div class="colblock">
+
+            <div class="limbss">
+            Количество <br> Ваших конечностей: <br> 
+                <div class="rad">
+                    <label>
+                        <input type="radio" name="limbs" value="1"> 1
+                    </label>
+                    <label>
+                        <input type="radio" name="limbs" value="2"> 2
+                    </label>
+                    <label>
+                        <input type="radio" name="limbs" value="3"> 3
+                    </label>
+                    <label>
+                        <input type="radio" name="limbs" value="4"> 4
+                    </label>
+                </div>
+            </div>
+
+            <div class="superpowers">   
+                <label>
+                    Ваши <br> сверхспособности:<br>
+                    <div class="powers">
+                        <select name="ability[]" multiple="multiple">
+                            <option value="immortality">Бессмертие</option>
+                            <option value="passingWalls">Прохождение сквозь стены</option>
+                            <option value="levitation">Левитация</option>
+                        </select>
+                    </div>
+                </label> 
+            </div>
+    
+        </div>
+    
+    </div>
+    
+    <div class="сheck">
+        <input class="сheckbox" type="checkbox" id="agree" name="agree">
+        <label for="agree">С контрактом ознакомлен(a)</label>
+    </div>
+
+    <div>
+        <button  type="submit">Отправить</button>
+    </div>
+
+</form>
+
+</body>
+</html>

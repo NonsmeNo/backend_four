@@ -33,11 +33,11 @@ if (!empty($messages)) {
         </div>
         <div class="item">
                 <label for="email">E-mail</label><br>
-                <input type="text" name="email" class="<?php if ($errors['email']) {print 'email';} ?>"  value="<?php print $values['email'];?>" placeholder="Введите e-mail">     
+                <input type="text" name="email" value="<?php print $values['email'];?>" placeholder="Введите e-mail">     
         </div>
         <div class="item">
             Ваша биография<br>
-        <textarea name="biography" class="<?php if ($errors['biography']) {print 'biography';} ?>"  value="<?php print $values['biography'];?>" placeholder="Добавьте биографию"></textarea>
+        <textarea name="biography" value="<?php print $values['biography'];?>" ><?php print $values['biography'];?></textarea>
         </div>
     </div>
 
@@ -53,7 +53,7 @@ if (!empty($messages)) {
                     </label>
                     <br>
                     <label>
-                        <input type="radio" name="gender" value="M">
+                        <input type="radio" name="gender" value="M"  <?php if ($values['gender']=='M') {print 'checked';} ?> >
                         Мужской &#9794;
                     </label>
                 </div>
@@ -76,16 +76,16 @@ if (!empty($messages)) {
             Количество <br> Ваших конечностей: <br> 
                 <div class="rad">
                     <label>
-                        <input type="radio" name="limbs" value="1"> 1
+                        <input type="radio" name="limbs" value="1" <?php if ($values['limbs']=='1') {print 'checked';}?> > 1
                     </label>
                     <label>
-                        <input type="radio" name="limbs" value="2"> 2
+                        <input type="radio" name="limbs" value="2" <?php if ($values['limbs']=='2') {print 'checked';}?>> 2
                     </label>
                     <label>
-                        <input type="radio" name="limbs" value="3"> 3
+                        <input type="radio" name="limbs" value="3" <?php if ($values['limbs']=='3') {print 'checked';}?>> 3
                     </label>
                     <label>
-                        <input type="radio" name="limbs" value="4"> 4
+                        <input type="radio" name="limbs" value="4" <?php if ($values['limbs']=='4') {print 'checked';}?>> 4
                     </label>
                 </div>
             </div>
@@ -95,9 +95,9 @@ if (!empty($messages)) {
                     Ваши <br> сверхспособности:<br>
                     <div class="powers">
                         <select name="ability[]" multiple="multiple">
-                            <option value="immortality">Бессмертие</option>
-                            <option value="passingWalls">Прохождение сквозь стены</option>
-                            <option value="levitation">Левитация</option>
+                            <option value="immortality" <?php if(!empty($values['ability'][0])) {if ($values['ability'][0] == "immortality") {print 'selected';}} ?>> Бессмертие </option>
+                            <option value="passingWalls" <?php if(!empty($values['ability'][1])) {if ($values['ability'][1] == "passingWalls") {print 'selected';}} ?>> Прохождение сквозь стены </option>
+                            <option value="levitation" <?php if(!empty($values['ability'][2])) {if ($values['ability'][2] == "levitation") {print 'selected';}} ?>> Левитация </option>
                         </select>
                     </div>
                 </label> 

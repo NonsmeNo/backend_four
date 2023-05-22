@@ -2,10 +2,10 @@
 header('Content-Type: text/html; charset=UTF-8'); //кодировка для браузера
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-  // Массив для временного хранения сообщений пользователю.
-  $messages = array();
+  
+  $messages = array(); //Массив для временного хранения сообщений пользователю
 
-  // Выдаем сообщение об успешном сохранении
+  //Выдаем сообщение об успешном сохранении
   if (!empty($_COOKIE['save'])) {
     setcookie('save', '', 100000);//удаление
 
@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $errors['agree'] = !empty($_COOKIE['agree']);
   $errors['ability'] = !empty($_COOKIE['ability_error']);
 
+  
   // Выдаем сообщения об ошибках.
   if ($errors['name']) {
     // Удаляем куку, указывая время устаревания в прошлом.
@@ -31,37 +32,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   }
   
   if ($errors['email']) {
-    setcookie('email', '', 100000);
+    setcookie('email_error', '', 100000);
 
     $messages[] = '<div class="error">Введите E-mail</div>';
   }
 
   if ($errors['biography']) {
-    setcookie('biography', '', 100000);
+    setcookie('biography_error', '', 100000);
 
     $messages[] = '<div class="error">Добавьте вашу биографию</div>';
   }
 
   if ($errors['gender']) {
-    setcookie('gender', '', 100000);
+    setcookie('gender_error', '', 100000);
 
     $messages[] = '<div class="error">Выберите пол</div>';
   }
 
   if ($errors['limbs']) {
-    setcookie('limbs', '', 100000);
+    setcookie('limbs_error', '', 100000);
 
     $messages[] = '<div class="error">Выберите число конечностей</div>';
   }
 
   if ($errors['agree']) {
-    setcookie('agree', '', 100000);
+    setcookie('agree_error', '', 100000);
 
     $messages[] = '<div class="error">Вы не ознакомились с контрактом</div>';
   }
 
   if ($errors['ability']) {
-    setcookie('ability', '', 100000);
+    setcookie('ability_error', '', 100000);
 
     $messages[] = '<div class="error">Выберите сверхспособности</div>';
   }
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $values['gender'] = empty($_COOKIE['gender_value']) ? '' : $_COOKIE['gender_value'];
   $values['limbs'] = empty($_COOKIE['limbs_value']) ? '' : $_COOKIE['limbs_value'];
   $values['agree'] = empty($_COOKIE['agree_value']) ? '' : $_COOKIE['agree_value'];
-  $values['ability'] = empty($_COOKIE['ability_value']) ? '' : $_COOKIE['ability_value'];
+  $values['ability'] = empty($_COOKIE['ability_value']) ? '' : ($_COOKIE['ability_value']);
 
   // Включаем содержимое файла form.php.
   // В нем будут доступны переменные $messages, $errors и $values для вывода 
@@ -174,7 +175,6 @@ else {
   }
 
 
-
   /*
   $date1="2004-01-01";
   $date=$_POST['birth'];
@@ -185,8 +185,8 @@ else {
     exit();
   }*/
 
+
    //-------------------------------Сохранение в базу данных.----------------------
-  // Сохранение в базу данных.
   $db = new PDO('mysql:host=localhost;dbname=u52945', 'u52945', '3219665',
     [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
@@ -210,13 +210,14 @@ else {
       $stmt->bindParam(':ability_name', $ability);
       $stmt->execute();
     }   
-    $messages[] = '<div class="saves">Данные успешно отправлены!</div>';
+
   }
 
   catch(PDOException $e) {
-    print('ошибка при отправке данных: ' . $e->getMessage());
+    print('ошибка при отправке данных: ' .$e->getMessage());
     exit();
   }
+
   //--------------------------------------------------------------------------
 
   // Сохраняем куку с признаком успешного сохранения.
@@ -224,4 +225,5 @@ else {
 
   // Делаем перенаправление.
   header('Location: index.php');
+
 }

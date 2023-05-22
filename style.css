@@ -158,8 +158,4 @@ form .check {
 
 .error {
     border: 5px solid rgb(255, 0, 0);
-    background-color: aliceblue;
-    color: black;
-    max-width: 800px;
-
 }

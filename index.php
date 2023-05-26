@@ -1,26 +1,24 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8'); //кодировка для браузера
+header('Content-Type: text/html; charset=UTF-8');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   
-  $messages = array(); //Массив для временного хранения сообщений пользователю
+   $messages = array();
 
-  //Выдаем сообщение об успешном сохранении
   if (!empty($_COOKIE['save'])) {
     setcookie('save', '', 100000);//удаление
-
     $messages[] = '<div class="saves">Спасибо, результаты сохранены!</div>';
   }
 
-  // Складываем признак ошибок в массив.
   $errors = array();
   $errors['name'] = !empty($_COOKIE['name_error']);
   $errors['email'] = !empty($_COOKIE['email_error']);
   $errors['biography'] = !empty($_COOKIE['biography_error']);
   $errors['gender'] = !empty($_COOKIE['gender_error']);
   $errors['limbs'] = !empty($_COOKIE['limbs_error']);
-  $errors['agree'] = !empty($_COOKIE['agree']);
+  $errors['agree'] = !empty($_COOKIE['agree_error']);
   $errors['ability'] = !empty($_COOKIE['ability_error']);
+  $errors['birth'] = !empty($_COOKIE['birth_error']);
 
   
   // Выдаем сообщения об ошибках.
@@ -28,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Удаляем куку, указывая время устаревания в прошлом.
     setcookie('name_error', '', 100000);
     // Выводим сообщение.
-    $messages[] = '<div class="error">Введите имя</div>';
+    $messages[] = '<div class="error">Поле имя не может быть пустым, должно содержать только буквы и начинаться с заглавной буквы</div>';
   }
   
   if ($errors['email']) {
     setcookie('email_error', '', 100000);
 
-    $messages[] = '<div class="error">Введите E-mail</div>';
+    $messages[] = '<div class="error">Введен пустой или некорректный E-mail. E-mail может содержать только латинские буквы, цифры, а также символы - _ .</div>';
   }
 
   if ($errors['biography']) {
@@ -49,16 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $messages[] = '<div class="error">Выберите пол</div>';
   }
 
+  if ($errors['birth']) {
+    setcookie('birth_error', '', 100000);
+
+    $messages[] = '<div class="error">Дата рождения не может быть пустой, она должна быть меньше нынешней даты, и год должен быть не меньше 1900</div>';
+  }
+
   if ($errors['limbs']) {
     setcookie('limbs_error', '', 100000);
 
     $messages[] = '<div class="error">Выберите число конечностей</div>';
-  }
-
-  if ($errors['agree']) {
-    setcookie('agree_error', '', 100000);
-
-    $messages[] = '<div class="error">Вы не ознакомились с контрактом</div>';
   }
 
   if ($errors['ability']) {
@@ -67,104 +65,140 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $messages[] = '<div class="error">Выберите сверхспособности</div>';
   }
 
+  if ($errors['agree']) {
 
-  // Складываем предыдущие значения полей в массив, если есть.
+    $messages[] = '<div class="error">Вы не ознакомились с контрактом</div>';
+    setcookie('agree_error', '', 100000);
+
+  }
+
   $values = array();
-
   $values['name'] = empty($_COOKIE['name_value']) ? '' : $_COOKIE['name_value'];
   $values['email'] = empty($_COOKIE['email_value']) ? '' : $_COOKIE['email_value'];
   $values['biography'] = empty($_COOKIE['biography_value']) ? '' : $_COOKIE['biography_value'];
   $values['gender'] = empty($_COOKIE['gender_value']) ? '' : $_COOKIE['gender_value'];
   $values['limbs'] = empty($_COOKIE['limbs_value']) ? '' : $_COOKIE['limbs_value'];
   $values['agree'] = empty($_COOKIE['agree_value']) ? '' : $_COOKIE['agree_value'];
-  $values['ability'] = empty($_COOKIE['ability_value']) ? '' : ($_COOKIE['ability_value']);
+  $values['birth'] = empty($_COOKIE['birth_value']) ? '' : ($_COOKIE['birth_value']);
 
-  // Включаем содержимое файла form.php.
-  // В нем будут доступны переменные $messages, $errors и $values для вывода 
-  // сообщений, полей с ранее заполненными данными и признаками ошибок.
+
+  $values['ability'] = empty($_COOKIE['ability_value']) ?  array() : unserialize($_COOKIE['ability_value']);
+
+
+
   include('form.php');
 }
-// Иначе, если запрос был методом POST, т.е. нужно проверить данные и сохранить их в XML-файл.
+
+//-----------------------------------------------------------------------------------------
+// Иначе если POST (нужно проверить данные на пустоту или правильный ввод и сохранить их в файл)
+
 else {
-  // Проверяем ошибки.
+
+  // 1) Проверяем ошибки
+
   $errors = FALSE;
-  if (empty($_POST['name'])) {
-    // Выдаем куку на день с флажком об ошибке в поле name.
-    setcookie('name_error', '1', time() + 24 * 60 * 60);
-    $errors = TRUE;
-  }
-  // Сохраняем ранее введенное в форму значение на месяц.
-  else {
-    setcookie('name_value', $_POST['name'], time() + 30 * 24 * 60 * 60);
-  }
+  if (empty($_POST['name']) or !preg_match('/^[A-ZЁА-Я][a-zа-яёъ]+$/u', $_POST['name'])) {
 
-  if (empty($_POST['email'])) {
-    setcookie('email_error', '1', time() + 24 * 60 * 60);
+    setcookie('name_error', '1', time() + 86400); 
     $errors = TRUE;
   }
   else {
-    setcookie('email_value', $_POST['email'], time() + 30 * 24 * 60 * 60);
+    setcookie('name_value', $_POST['name'], time() + 86400 * 30); 
   }
 
+
+
+  if (empty($_POST['email']) or !preg_match('/^[A-Z0-9a-z-_.]+[@][a-z]+[.][a-z]+$/', $_POST['email'])) {
+    setcookie('email_error', '1', time() + 86400);
+    $errors = TRUE;
+  }
+  else {
+    setcookie('email_value', $_POST['email'], time() + 30 * 86400);
+  }
+
+
+  $current_date = date('Y-m-d');
+  if (empty($_POST['birth']) or (!preg_match('/[12][90][0-9][0-9][-][0-1][0-9]-[0-3][0-9]/', $_POST['birth']) and ($current_date < $_POST['birth']) )) {
+    setcookie('birth_error', '1', time() + 86400);
+    $errors = TRUE;
+  }
+  else {
+    setcookie('birth_value', $_POST['birth'], time() + 30 * 86400);
+  }
 
 
   if (empty($_POST['biography'])) {
-    setcookie('biography_error', '1', time() + 24 * 60 * 60);
+    setcookie('biography_error', '1', time() + 86400);
     $errors = TRUE;
   }
   else {
-    setcookie('biography_value', $_POST['biography'], time() + 30 * 24 * 60 * 60);
+    setcookie('biography_value', $_POST['biography'], time() + 30 * 86400);
   }
 
 
 
   if (empty($_POST['gender'])) {
-    setcookie('gender_error', '1', time() + 24 * 60 * 60);
+    setcookie('gender_error', '1', time() + 86400);
     $errors = TRUE;
   }
   else {
-    setcookie('gender_value', $_POST['gender'], time() + 30 * 24 * 60 * 60);
+    setcookie('gender_value', $_POST['gender'], time() + 30 * 86400);
   }
 
 
 
   if (empty($_POST['limbs'])) {
-    setcookie('limbs_error', '1', time() + 24 * 60 * 60);
+    setcookie('limbs_error', '1', time() + 86400);
     $errors = TRUE;
   }
   else {
-    setcookie('limbs_value', $_POST['limbs'], time() + 30 * 24 * 60 * 60);
+    setcookie('limbs_value', $_POST['limbs'], time() + 30 * 86400);
   }
 
 
 
 
   if (empty($_POST['agree'])) {
-    setcookie('agree_error', '1', time() + 24 * 60 * 60);
+    setcookie('agree_error', '1', time() + 86400);
+    setcookie('agree_value', '0', time() + 30 * 86400);
     $errors = TRUE;
   }
   else {
-    setcookie('agree_value', $_POST['agree'], time() + 30 * 24 * 60 * 60);
+    setcookie('agree_value', '1', time() + 30 * 86400);
   }
 
 
   
 
   if (empty($_POST['ability'])) {
-    setcookie('ability_error', '1', time() + 24 * 60 * 60);
+    setcookie('ability_error', '1', time() + 86400);
     $errors = TRUE;
   }
   else {
-    setcookie('ability_value', $_POST['ability'], time() + 30 * 24 * 60 * 60);
+    $array = array();
+    foreach ($_POST['ability'] as $ability)
+    {
+      switch ($ability) {
+        case "immortality":
+            $array[0] = $ability;
+            break;
+        case "passingWalls":
+            $array[1] = $ability;
+            break;
+        case "levitation":
+            $array[2] = $ability;
+            break;
+    }
+    }   
+
+    setcookie('ability_value', serialize($array), time() + 30 * 86400);
   }
 
   if ($errors) {
-    // При наличии ошибок перезагружаем страницу и завершаем работу скрипта.
     header('Location: index.php');
     exit();
   }
   else {
-    // Удаляем Cookies с признаками ошибок.
     setcookie('name_error', '', 100000);
     setcookie('email_error', '', 100000);
     setcookie('biography_error', '', 100000);
@@ -172,18 +206,9 @@ else {
     setcookie('limbs_error', '', 100000);
     setcookie('agree_error', '', 100000);
     setcookie('ability_error', '', 100000);
+    setcookie('birth_error', '', 100000);
   }
 
-
-  /*
-  $date1="2004-01-01";
-  $date=$_POST['birth'];
-
-  if ($date>=$date1)
-  {
-    print('Выбрана некорректная дата &#128559;<br>');
-    exit();
-  }*/
 
 
    //-------------------------------Сохранение в базу данных.----------------------

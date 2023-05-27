@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // Удаляем куку, указывая время устаревания в прошлом.
     setcookie('name_error', '', 100000);
     // Выводим сообщение.
-    $messages[] = '<div class="error">Поле имя не может быть пустым, должно содержать только буквы и начинаться с заглавной буквы</div>';
+    $messages[] = '<div class="error">Имя не может быть пустым, должно содержать только буквы, начинаться с заглавной буквы и не должнно содержать пробелы</div>';
   }
   
   if ($errors['email']) {
@@ -97,7 +97,7 @@ else {
   // 1) Проверяем ошибки
 
   $errors = FALSE;
-  if (empty($_POST['name']) or !preg_match('/^[A-ZЁА-Я][a-zа-яёъ]+$/u', $_POST['name'])) {
+  if (empty($_POST['name']) || !preg_match('/^[A-ZЁА-Я][a-zа-яёъ]+$/u', $_POST['name'])) {
 
     setcookie('name_error', '1', time() + 86400); 
     $errors = TRUE;
@@ -108,7 +108,7 @@ else {
 
 
 
-  if (empty($_POST['email']) or !preg_match('/^[A-Z0-9a-z-_.]+[@][a-z]+[.][a-z]+$/', $_POST['email'])) {
+  if (empty($_POST['email']) || !preg_match('/^[A-Z0-9a-z-_.]+[@][a-z]+[.][a-z]+$/', $_POST['email'])) {
     setcookie('email_error', '1', time() + 86400);
     $errors = TRUE;
   }
@@ -116,9 +116,15 @@ else {
     setcookie('email_value', $_POST['email'], time() + 30 * 86400);
   }
 
+  $today = date('Y-m-d');
+  if (!empty($_POST['birth'])) {
+    $expire = $_POST['birth'];
+  }
 
-  $current_date = date('Y-m-d');
-  if (empty($_POST['birth']) or (!preg_match('/[12][90][0-9][0-9][-][0-1][0-9]-[0-3][0-9]/', $_POST['birth']) and ($current_date < $_POST['birth']) )) {
+  $today_dt = new DateTime($today);
+  $expire_dt = new DateTime($expire);
+
+  if (empty($_POST['birth']) || !preg_match('/[12][90][0-9][0-9][-][0-1][0-9]-[0-3][0-9]/', $_POST['birth']) || ($today_dt < $expire_dt) ) {
     setcookie('birth_error', '1', time() + 86400);
     $errors = TRUE;
   }
